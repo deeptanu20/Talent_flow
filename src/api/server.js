@@ -159,6 +159,15 @@ export function makeServer({ environment = "development" } = {}) {
         return { assessment };
       });
 
+      this.post("/assessments/:jobId/submit", async (_, req) => {
+      let jobId = req.params.jobId;
+      let submission = JSON.parse(req.requestBody);
+      console.log(`Received submission for job ${jobId}:`, submission);
+
+  // Currently, we do not store it
+      return new Response(200, {}, { message: "Submission received (not stored)" });
+});
+
       this.put("/assessments/:jobId", async (_, req) => {
         const errorResponse = maybeError();
         if (errorResponse) return errorResponse;

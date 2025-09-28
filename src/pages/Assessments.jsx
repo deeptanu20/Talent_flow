@@ -17,7 +17,17 @@ export default function Assessments() {
   }, [jobId]);
 
   const addQuestion = () => {
-    setQuestions([...questions, { type: "text", label: "New Question" }]);
+    setQuestions([
+      ...questions,
+      {
+        type: "text",
+        label: "New Question",
+        options: [],
+        required: false,
+        min: null,
+        max: null,
+      },
+    ]);
   };
 
   const saveAssessment = async () => {
@@ -82,7 +92,85 @@ export default function Assessments() {
                   <option value="text">Short Text</option>
                   <option value="textarea">Long Text</option>
                   <option value="number">Number</option>
+                  <option value="range">Number (Range)</option>
+                  <option value="radio">Single Choice</option>
+                  <option value="checkbox">Multiple Choice</option>
+                  <option value="file">File Upload</option>
                 </select>
+
+                {/* Options for radio/checkbox */}
+                {(q.type === "radio" || q.type === "checkbox") && (
+                  <div className="options">
+                    {q.options.map((opt, idx) => (
+                      <input
+                        key={idx}
+                        type="text"
+                        value={opt}
+                        placeholder={`Option ${idx + 1}`}
+                        onChange={(e) => {
+                          const copy = [...questions];
+                          copy[i].options[idx] = e.target.value;
+                          setQuestions(copy);
+                        }}
+                      />
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const copy = [...questions];
+                        copy[i].options.push("");
+                        setQuestions(copy);
+                      }}
+                    >
+                      ➕ Add Option
+                    </button>
+                  </div>
+                )}
+
+                {/* Validation rules */}
+                <div className="validation">
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={q.required}
+                      onChange={(e) => {
+                        const copy = [...questions];
+                        copy[i].required = e.target.checked;
+                        setQuestions(copy);
+                      }}
+                    />{" "}
+                    Required
+                  </label>
+
+                  {q.type === "range" && (
+                    <>
+                      <input
+                        type="number"
+                        placeholder="Min"
+                        value={q.min ?? ""}
+                        onChange={(e) => {
+                          const copy = [...questions];
+                          copy[i].min = e.target.value
+                            ? Number(e.target.value)
+                            : null;
+                          setQuestions(copy);
+                        }}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Max"
+                        value={q.max ?? ""}
+                        onChange={(e) => {
+                          const copy = [...questions];
+                          copy[i].max = e.target.value
+                            ? Number(e.target.value)
+                            : null;
+                          setQuestions(copy);
+                        }}
+                      />
+                    </>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -98,10 +186,41 @@ export default function Assessments() {
           <form>
             {questions.map((q, i) => (
               <div key={i} className="question-item">
-                <label>{q.label}</label>
-                {q.type === "text" && <input type="text" />}
-                {q.type === "textarea" && <textarea />}
-                {q.type === "number" && <input type="number" />}
+                <label>
+                  {q.label} {q.required && "*"}
+                </label>
+
+                {q.type === "text" && <input type="text" required={q.required} />}
+                {q.type === "textarea" && <textarea required={q.required} />}
+                {q.type === "number" && <input type="number" required={q.required} />}
+                {q.type === "range" && (
+                  <input
+                    type="number"
+                    min={q.min}
+                    max={q.max}
+                    required={q.required}
+                  />
+                )}
+                {q.type === "radio" &&
+                  q.options.map((opt, idx) => (
+                    <label key={idx}>
+                      <input
+                        type="radio"
+                        name={`q${i}`}
+                        value={opt}
+                        required={q.required}
+                      />
+                      {opt}
+                    </label>
+                  ))}
+                {q.type === "checkbox" &&
+                  q.options.map((opt, idx) => (
+                    <label key={idx}>
+                      <input type="checkbox" name={`q${i}`} value={opt} />
+                      {opt}
+                    </label>
+                  ))}
+                {q.type === "file" && <input type="file" disabled />}
               </div>
             ))}
           </form>
