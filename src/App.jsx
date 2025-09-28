@@ -6,6 +6,7 @@ import Jobs from "./pages/Jobs";
 import JobDetail from "./pages/JobDetail";
 import Candidates from "./pages/Candidates";
 import Assessments from "./pages/Assessments";
+import CandidateDetail from "./pages/CandidateDetail"; 
 
 makeServer();
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/jobs" element={<Jobs />} />
          <Route path="/jobs/:jobId" element={<JobDetail />} />
         <Route path="/candidates" element={<Candidates />} />
+        <Route path="/candidates/:id" element={<CandidateDetail />} />
         <Route path="/assessments" element={<Assessments />} />
       </Routes>
     </BrowserRouter>

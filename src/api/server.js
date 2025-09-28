@@ -16,29 +16,33 @@ export function makeServer({ environment = "development" } = {}) {
     },
     factories: {
       job: Factory.extend({
-        title() { return faker.person.jobTitle(); }, // Updated faker API
+        title() { return faker.person.jobTitle(); },
         slug(i) { return `job-${i}`; },
-        status() { return faker.helpers.arrayElement(["active", "archived"]); }, // Updated method
+        status() { return faker.helpers.arrayElement(["active", "archived"]); },
         tags() { return [faker.hacker.ingverb(), faker.hacker.noun()]; },
         order(i) { return i; }
       }),
       candidate: Factory.extend({
-        name() { return faker.person.fullName(); }, // Updated faker API
+        name() { return faker.person.fullName(); },
         email() { return faker.internet.email(); },
-        stage() { return faker.helpers.arrayElement(["applied","screen","tech","offer","hired","rejected"]); } // Updated method
+        stage() { return faker.helpers.arrayElement(["applied","screen","tech","offer","hired","rejected"]); }
       }),
     },
     seeds(server) {
+      // Jobs
       loadJobs().then(async (storedJobs) => {
-        if (storedJobs.length === 0) {
-          const jobs = server.createList("job", 25).models.map(m => m.attrs);
+        if (!storedJobs || storedJobs.length === 0) {
+          const jobsList = server.createList("job", 25);
+          const jobs = jobsList.map(j => j.attrs);
           await saveJobs(jobs);
         }
       });
 
+      // Candidates
       loadCandidates().then(async (stored) => {
-        if (stored.length === 0) {
-          const candidates = server.createList("candidate", 1000).models.map(m => m.attrs);
+        if (!stored || stored.length === 0) {
+          const list = server.createList("candidate", 1000); // create 1000 candidates
+          const candidates = list.map(c => c.attrs); // map to plain objects
           await saveCandidates(candidates);
         }
       });
@@ -47,7 +51,6 @@ export function makeServer({ environment = "development" } = {}) {
       this.namespace = "api";
       this.timing = 400;
 
-      
       function maybeError() {
         if (Math.random() < 0.1) {
           return new Response(500, {}, { error: "Random failure" });
@@ -55,33 +58,28 @@ export function makeServer({ environment = "development" } = {}) {
         return null;
       }
 
-      // Jobs(updated)
-  this.get("/jobs", async (schema, req) => {
-  let { search, status, page = 1, pageSize = 5 } = req.queryParams;
-  page = Number(page);
-  pageSize = Number(pageSize);
+      // Jobs endpoints
+      this.get("/jobs", async (schema, req) => {
+        let { search, status, page = 1, pageSize = 5 } = req.queryParams;
+        page = Number(page);
+        pageSize = Number(pageSize);
 
-  let jobs = await loadJobs();
+        let jobs = await loadJobs();
 
-  if (search) {
-    jobs = jobs.filter(j => j.title.toLowerCase().includes(search.toLowerCase()));
-  }
-  if (status) {
-    jobs = jobs.filter(j => j.status === status);
-  }
+        if (search) jobs = jobs.filter(j => j.title.toLowerCase().includes(search.toLowerCase()));
+        if (status) jobs = jobs.filter(j => j.status === status);
 
-  const total = jobs.length;
-  const start = (page - 1) * pageSize;
-  const paginated = jobs.slice(start, start + pageSize);
+        const total = jobs.length;
+        const start = (page - 1) * pageSize;
+        const paginated = jobs.slice(start, start + pageSize);
 
-  return { jobs: paginated, total };
-});
-
+        return { jobs: paginated, total };
+      });
 
       this.post("/jobs", async (_, req) => {
         const errorResponse = maybeError();
         if (errorResponse) return errorResponse;
-        
+
         let job = JSON.parse(req.requestBody);
         let jobs = await loadJobs();
         job.id = jobs.length ? Math.max(...jobs.map(j => j.id)) + 1 : 1;
@@ -93,7 +91,7 @@ export function makeServer({ environment = "development" } = {}) {
       this.patch("/jobs/:id", async (_, req) => {
         const errorResponse = maybeError();
         if (errorResponse) return errorResponse;
-        
+
         let id = Number(req.params.id);
         let attrs = JSON.parse(req.requestBody);
         let jobs = await loadJobs();
@@ -102,11 +100,10 @@ export function makeServer({ environment = "development" } = {}) {
         return { job: updated.find(j => j.id === id) };
       });
 
-      // Fixed reorder endpoint - should use job ID, not order
       this.patch("/jobs/reorder", async (_, req) => {
         const errorResponse = maybeError();
         if (errorResponse) return errorResponse;
-        
+
         let { fromOrder, toOrder } = JSON.parse(req.requestBody);
         let jobs = await loadJobs();
 
@@ -126,15 +123,16 @@ export function makeServer({ environment = "development" } = {}) {
         return { jobs };
       });
 
-      // Candidates
+      // Candidates endpoints
       this.get("/candidates", async () => {
-        return { candidates: await loadCandidates() };
+        const list = await loadCandidates();
+        return { candidates: list };
       });
 
       this.post("/candidates", async (_, req) => {
         const errorResponse = maybeError();
         if (errorResponse) return errorResponse;
-        
+
         let candidate = JSON.parse(req.requestBody);
         let list = await loadCandidates();
         candidate.id = list.length ? Math.max(...list.map(c => c.id)) + 1 : 1;
@@ -146,7 +144,7 @@ export function makeServer({ environment = "development" } = {}) {
       this.patch("/candidates/:id", async (_, req) => {
         const errorResponse = maybeError();
         if (errorResponse) return errorResponse;
-        
+
         let id = Number(req.params.id);
         let attrs = JSON.parse(req.requestBody);
         let list = await loadCandidates();
@@ -155,7 +153,7 @@ export function makeServer({ environment = "development" } = {}) {
         return { candidate: updated.find(c => c.id === id) };
       });
 
-      // Assessments
+      // Assessments endpoints
       this.get("/assessments/:jobId", async (_, req) => {
         const assessment = await loadAssessment(req.params.jobId);
         return { assessment };
@@ -164,7 +162,7 @@ export function makeServer({ environment = "development" } = {}) {
       this.put("/assessments/:jobId", async (_, req) => {
         const errorResponse = maybeError();
         if (errorResponse) return errorResponse;
-        
+
         let jobId = req.params.jobId;
         let data = JSON.parse(req.requestBody);
         await saveAssessment(jobId, { questions: data.questions });
