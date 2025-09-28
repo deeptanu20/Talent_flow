@@ -1,0 +1,117 @@
+
+.candidates-container {
+  padding: 16px;
+  font-family: Arial, sans-serif;
+  background-color: #f9fafb;
+}
+
+/* Header */
+.candidates-container h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: #111827;
+}
+
+/* Stage Columns */
+.stage-column {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 12px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  max-height: 600px;
+}
+
+/* Stage Header */
+.stage-column h3 {
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #1f2937;
+}
+
+/* Candidate List */
+.candidate-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Candidate Item */
+.candidate-item {
+  padding: 8px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.candidate-item:hover {
+  background-color: #f3f4f6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Candidate Name */
+.candidate-item span {
+  font-size: 14px;
+  color: #111827;
+}
+
+/* Stage Dropdown */
+.candidate-item select {
+  font-size: 13px;
+  padding: 4px 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.candidate-item select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Grid Layout for Stages */
+.stages-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 1024px) {
+  .stages-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .stages-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 400px) {
+  .stages-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Loading State */
+.loading {
+  font-size: 14px;
+  color: #6b7280;
+  padding: 16px 0;
+}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useStore } from "../store/useStore";
+import "./Candidates.css";
 
 const stages = ["applied", "screen", "tech", "offer", "hired", "rejected"];
 
@@ -22,6 +23,7 @@ export default function Candidates() {
     try {
       const res = await fetch(`/api/candidates/${id}`, {
         method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ stage: newStage }),
       });
       if (!res.ok) throw new Error("Failed");
@@ -32,30 +34,28 @@ export default function Candidates() {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Candidates</h2>
-      {loading && <p>Loading...</p>}
+    <div className="candidates-container">
+      <h2>Candidates</h2>
+      {loading && <p className="loading">Loading...</p>}
 
-      <div className="grid grid-cols-6 gap-4">
+      <div className="stages-grid">
         {stages.map((stage) => (
-          <div key={stage} className="border rounded p-2">
-            <h3 className="font-semibold capitalize mb-2">{stage}</h3>
-            <ul className="space-y-1 max-h-96 overflow-y-auto">
+          <div key={stage} className="stage-column">
+            <h3>{stage}</h3>
+            <ul className="candidate-list">
               {candidates
                 .filter((c) => c.stage === stage)
                 .map((c) => (
-                  <li
-                    key={c.id}
-                    className="p-2 border rounded bg-white flex justify-between items-center"
-                  >
+                  <li key={c.id} className="candidate-item">
                     <span>{c.name}</span>
                     <select
                       value={c.stage}
                       onChange={(e) => moveStage(c.id, e.target.value)}
-                      className="text-sm border rounded"
                     >
                       {stages.map((s) => (
-                        <option key={s} value={s}>{s}</option>
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
                       ))}
                     </select>
                   </li>

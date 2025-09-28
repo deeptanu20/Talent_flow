@@ -47,7 +47,7 @@ export function makeServer({ environment = "development" } = {}) {
       this.namespace = "api";
       this.timing = 400;
 
-      // Simulate 5–10% write errors
+      
       function maybeError() {
         if (Math.random() < 0.1) {
           return new Response(500, {}, { error: "Random failure" });
@@ -55,10 +55,28 @@ export function makeServer({ environment = "development" } = {}) {
         return null;
       }
 
-      // Jobs
-      this.get("/jobs", async () => {
-        return { jobs: await loadJobs() };
-      });
+      // Jobs(updated)
+  this.get("/jobs", async (schema, req) => {
+  let { search, status, page = 1, pageSize = 5 } = req.queryParams;
+  page = Number(page);
+  pageSize = Number(pageSize);
+
+  let jobs = await loadJobs();
+
+  if (search) {
+    jobs = jobs.filter(j => j.title.toLowerCase().includes(search.toLowerCase()));
+  }
+  if (status) {
+    jobs = jobs.filter(j => j.status === status);
+  }
+
+  const total = jobs.length;
+  const start = (page - 1) * pageSize;
+  const paginated = jobs.slice(start, start + pageSize);
+
+  return { jobs: paginated, total };
+});
+
 
       this.post("/jobs", async (_, req) => {
         const errorResponse = maybeError();
