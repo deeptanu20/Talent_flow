@@ -3,6 +3,7 @@ import { useStore } from "../store/useStore";
 import "./CandidateDetail.css";
 
 const stages = ["applied", "screen", "tech", "offer", "hired", "rejected"];
+const mockMentions = ["Alice", "Bob", "Charlie", "David"];
 
 export default function CandidateDetail({ candidateId, onBack }) {
   const { candidates } = useStore();
@@ -46,7 +47,10 @@ export default function CandidateDetail({ candidateId, onBack }) {
         {candidate.notes?.length ? (
           candidate.notes.map((note, idx) => (
             <div key={idx} className="note-item">
-              {note}
+              {note.replace(/@(\w+)/g, (_, name) => {
+                if (mockMentions.includes(name)) return `@${name}`;
+                return name;
+              })}
             </div>
           ))
         ) : (

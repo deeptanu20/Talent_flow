@@ -1,133 +1,123 @@
+/* Container */
 .assessments-container {
-  padding: 16px;
+  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
-  font-family: Arial, sans-serif;
+  font-family: "Inter", Arial, sans-serif;
+  color: #1f2937;
 }
 
 .assessments-container h2 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 16px;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #111827;
 }
 
+/* Job selector */
 .job-selector {
-  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
 }
 
 .job-selector label {
-  margin-right: 8px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .job-selector input {
-  width: 60px;
-  padding: 4px 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.add-section-btn, .add-question-btn, .save-assessment-btn {
-  cursor: pointer;
-  border: none;
+  width: 80px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
   font-size: 14px;
-  margin-top: 8px;
 }
 
-.add-section-btn, .add-question-btn {
-  background-color: #22c55e;
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-}
-
-.add-section-btn:hover, .add-question-btn:hover {
-  background-color: #16a34a;
-}
-
-.save-assessment-btn {
-  margin-top: 16px;
-  background-color: #2563eb;
-  color: #fff;
-  padding: 8px 16px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-}
-
-.save-assessment-btn:hover {
-  background-color: #1d4ed8;
-}
-
+/* Grid */
 .assessment-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  margin-top: 16px;
 }
 
+/* Builder / Preview boxes */
 .builder, .preview {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 16px;
-  background-color: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  border-radius: 10px;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.preview {
-  background-color: #f9fafb;
-}
-
+/* Headings */
 .builder h3, .preview h3 {
+  font-size: 1.25rem;
   font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 6px;
   margin-bottom: 12px;
 }
 
-/* Sections */
-.section {
-  border: 1px dashed #ccc;
+/* Buttons */
+.add-question-btn, .save-assessment-btn {
+  cursor: pointer;
+  border: none;
   border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 16px;
-  background-color: #f1f5f9;
+  padding: 8px 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
-.section input[type="text"] {
-  width: 100%;
-  font-weight: bold;
-  margin-bottom: 8px;
-  padding: 6px 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+.add-question-btn {
+  background-color: #22c55e;
+  color: white;
+}
+.add-question-btn:hover {
+  background-color: #16a34a;
 }
 
-/* Questions */
+.save-assessment-btn {
+  background-color: #2563eb;
+  color: white;
+}
+.save-assessment-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Question items */
 .question-item {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
 }
 
+/* Inputs & selects */
 .question-item input[type="text"],
+.question-item input[type="number"],
+.question-item textarea,
 .question-item select,
 .preview input,
 .preview textarea {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 6px 8px;
+  padding: 8px 10px;
   font-size: 14px;
-}
-
-.preview label {
-  display: block;
-  margin-bottom: 4px;
-  font-weight: 500;
-}
-
-.preview input, .preview textarea {
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
   width: 100%;
   box-sizing: border-box;
+}
+
+/* Labels */
+.preview label {
+  font-weight: 500;
+  margin-bottom: 4px;
+  display: block;
 }
 
 /* Options for radio/checkbox */
@@ -135,52 +125,55 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-top: 4px;
 }
-
 .options input[type="text"] {
-  width: 100%;
-  padding: 4px 6px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
   font-size: 14px;
 }
-
 .options button {
-  font-size: 12px;
-  padding: 2px 6px;
-  margin-top: 2px;
-  cursor: pointer;
+  font-size: 13px;
+  padding: 4px 8px;
+  margin-top: 4px;
+  border-radius: 6px;
   border: none;
   background-color: #22c55e;
   color: white;
-  border-radius: 4px;
+  cursor: pointer;
   width: fit-content;
 }
 
-/* Validation / Conditional rules */
+/* Validation rules */
 .validation {
-  margin-top: 4px;
   display: flex;
-  gap: 8px;
-  align-items: center;
   flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: #374151;
 }
 
 .conditional {
-  margin-top: 4px;
   font-size: 13px;
-  color: #555;
+  color: #6b7280;
 }
 
-/* Preview question items for radio/checkbox */
+/* Error messages */
+.error {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Radio/Checkbox styling */
 .preview label input[type="radio"],
 .preview label input[type="checkbox"] {
   margin-right: 6px;
+  accent-color: #2563eb;
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .assessment-grid {
     grid-template-columns: 1fr;
   }

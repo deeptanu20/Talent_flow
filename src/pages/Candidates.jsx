@@ -11,7 +11,7 @@ export default function Candidates() {
   const [search, setSearch] = useState("");
   const [selectedCandidate, setSelectedCandidate] = useState(null);
 
-  // Load candidates from API
+  // Load candidates
   useEffect(() => {
     setLoading(true);
     fetch("/api/candidates")
@@ -20,7 +20,7 @@ export default function Candidates() {
       .finally(() => setLoading(false));
   }, [setCandidates]);
 
-  // Filter candidates by search
+  // Filter candidates
   const filteredCandidates = useMemo(() => {
     if (!search) return candidates;
     return candidates.filter(
@@ -48,7 +48,27 @@ export default function Candidates() {
     }
   };
 
-  // Show candidate detail view
+  // Drag and drop handlers
+  const handleDragStart = (e, candidateId) => {
+    e.dataTransfer.setData("candidateId", candidateId);
+  };
+
+  const handleDrop = (e, stage) => {
+    const id = e.dataTransfer.getData("candidateId");
+    moveStage(id, stage);
+    e.currentTarget.classList.remove("drag-over");
+    e.preventDefault();
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.currentTarget.classList.add("drag-over");
+  };
+
+  const handleDragLeave = (e) => {
+    e.currentTarget.classList.remove("drag-over");
+  };
+
   if (selectedCandidate) {
     return (
       <CandidateDetail
@@ -79,13 +99,21 @@ export default function Candidates() {
           );
 
           return (
-            <div key={stage} className="stage-column">
+            <div
+              key={stage}
+              className="stage-column"
+              onDrop={(e) => handleDrop(e, stage)}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+            >
               <h3 className="stage-title">{stage.toUpperCase()}</h3>
               <div className="candidate-list">
                 {stageCandidates.map((c) => (
                   <div
                     key={c.id}
                     className="candidate-item"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, c.id)}
                     onClick={() => setSelectedCandidate(c.id)}
                   >
                     <div className="candidate-info">
@@ -94,7 +122,7 @@ export default function Candidates() {
                     </div>
                     <select
                       value={c.stage}
-                      onClick={(e) => e.stopPropagation()} // prevent click on card
+                      onClick={(e) => e.stopPropagation()}
                       onChange={(e) => moveStage(c.id, e.target.value)}
                       className="stage-select"
                     >
