@@ -1,4 +1,3 @@
-// Candidates.jsx
 import React, { useEffect, useState, useMemo } from "react";
 import { useStore } from "../store/useStore";
 import CandidateDetail from "./CandidateDetail";

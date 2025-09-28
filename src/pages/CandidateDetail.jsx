@@ -1,4 +1,3 @@
-// CandidateDetail.jsx
 import React, { useEffect, useState } from "react";
 import { useStore } from "../store/useStore";
 import "./CandidateDetail.css";
