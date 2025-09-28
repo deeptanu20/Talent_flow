@@ -7,13 +7,14 @@ export default function Assessments() {
   const [jobId, setJobId] = useState("1");
   const [questions, setQuestions] = useState([]);
 
+  // Fetch assessment questions safely
   useEffect(() => {
     fetch(`/api/assessments/${jobId}`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.assessment) setQuestions(data.assessment.questions);
-        else setQuestions([]);
-      });
+        setQuestions(data.assessment?.questions || []); // fallback to empty array
+      })
+      .catch(() => setQuestions([])); // in case of fetch error
   }, [jobId]);
 
   const addQuestion = () => {
@@ -34,9 +35,10 @@ export default function Assessments() {
     try {
       const res = await fetch(`/api/assessments/${jobId}`, {
         method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ questions }),
       });
-      if (!res.ok) throw new Error("Failed");
+      if (!res.ok) throw new Error("Failed to save");
       const data = await res.json();
       setAssessments([
         ...assessments.filter((a) => a.id !== jobId),
@@ -70,7 +72,7 @@ export default function Assessments() {
           </button>
 
           <div className="question-list">
-            {questions.map((q, i) => (
+            {(questions || []).map((q, i) => (
               <div key={i} className="question-item">
                 <input
                   type="text"
@@ -98,10 +100,9 @@ export default function Assessments() {
                   <option value="file">File Upload</option>
                 </select>
 
-                {/* Options for radio/checkbox */}
                 {(q.type === "radio" || q.type === "checkbox") && (
                   <div className="options">
-                    {q.options.map((opt, idx) => (
+                    {(q.options || []).map((opt, idx) => (
                       <input
                         key={idx}
                         type="text"
@@ -118,6 +119,7 @@ export default function Assessments() {
                       type="button"
                       onClick={() => {
                         const copy = [...questions];
+                        copy[i].options = copy[i].options || [];
                         copy[i].options.push("");
                         setQuestions(copy);
                       }}
@@ -127,7 +129,7 @@ export default function Assessments() {
                   </div>
                 )}
 
-                {/* Validation rules */}
+                {/* Validation */}
                 <div className="validation">
                   <label>
                     <input
@@ -141,7 +143,6 @@ export default function Assessments() {
                     />{" "}
                     Required
                   </label>
-
                   {q.type === "range" && (
                     <>
                       <input
@@ -150,9 +151,7 @@ export default function Assessments() {
                         value={q.min ?? ""}
                         onChange={(e) => {
                           const copy = [...questions];
-                          copy[i].min = e.target.value
-                            ? Number(e.target.value)
-                            : null;
+                          copy[i].min = e.target.value ? Number(e.target.value) : null;
                           setQuestions(copy);
                         }}
                       />
@@ -162,9 +161,7 @@ export default function Assessments() {
                         value={q.max ?? ""}
                         onChange={(e) => {
                           const copy = [...questions];
-                          copy[i].max = e.target.value
-                            ? Number(e.target.value)
-                            : null;
+                          copy[i].max = e.target.value ? Number(e.target.value) : null;
                           setQuestions(copy);
                         }}
                       />
@@ -184,7 +181,7 @@ export default function Assessments() {
         <div className="preview">
           <h3>Preview</h3>
           <form>
-            {questions.map((q, i) => (
+            {(questions || []).map((q, i) => (
               <div key={i} className="question-item">
                 <label>
                   {q.label} {q.required && "*"}
@@ -194,27 +191,17 @@ export default function Assessments() {
                 {q.type === "textarea" && <textarea required={q.required} />}
                 {q.type === "number" && <input type="number" required={q.required} />}
                 {q.type === "range" && (
-                  <input
-                    type="number"
-                    min={q.min}
-                    max={q.max}
-                    required={q.required}
-                  />
+                  <input type="number" min={q.min} max={q.max} required={q.required} />
                 )}
                 {q.type === "radio" &&
-                  q.options.map((opt, idx) => (
+                  (q.options || []).map((opt, idx) => (
                     <label key={idx}>
-                      <input
-                        type="radio"
-                        name={`q${i}`}
-                        value={opt}
-                        required={q.required}
-                      />
+                      <input type="radio" name={`q${i}`} value={opt} required={q.required} />
                       {opt}
                     </label>
                   ))}
                 {q.type === "checkbox" &&
-                  q.options.map((opt, idx) => (
+                  (q.options || []).map((opt, idx) => (
                     <label key={idx}>
                       <input type="checkbox" name={`q${i}`} value={opt} />
                       {opt}
