@@ -1,156 +1,289 @@
-TalentFlow
+# TalentFlow - Mini Hiring Platform
 
-TalentFlow is a full-featured recruitment management platform built with React, MirageJS, and Dexie. It allows you to manage jobs, candidates, and assessments with persistence, simulated APIs, and an extendable architecture for scaling to real-world scenarios.
+A full-featured recruitment management platform built with React, MirageJS, and Dexie. TalentFlow allows HR teams to manage jobs, candidates, and assessments with complete offline persistence and simulated backend functionality.
 
-Table of Contents
+## 🚀 Live Demo
 
-Setup
+[Deployed App Link] - *(Add your deployment URL here)*
 
-Architecture
+## 📋 Table of Contents
 
-Features
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Quick Start](#quick-start)
+- [Project Structure](#project-structure)
+- [Architecture](#architecture)
+- [Core Features](#core-features)
+- [API Endpoints](#api-endpoints)
+- [Design Decisions](#design-decisions)
+- [Known Limitations](#known-limitations)
+- [Future Roadmap](#future-roadmap)
+- [Contributing](#contributing)
 
-Decisions & Design Choices
+## ✨ Features
 
-Known Limitations / Roadmap
+### Jobs Management
+- Create, edit, and archive jobs with validation
+- Server-like pagination and filtering (title, status, tags)
+- Deep linking to individual jobs (`/jobs/:jobId`)
+- Drag-and-drop reordering with optimistic updates and rollback
+- Status management (active/archived)
 
-Setup
-Prerequisites
+### Candidates Dashboard
+- Virtualized list handling 1000+ candidates efficiently
+- Client-side search by name and email
+- Kanban-style stage management with dropdown transitions
+- Individual candidate profile pages with timeline
+- Stage progression: Applied → Screen → Tech → Offer → Hired/Rejected
 
-Node.js v18+
+### Assessment Builder
+- Job-specific assessment creation
+- Multiple question types:
+  - Short text input
+  - Long text (textarea)
+  - Number input with range validation
+  - Single choice (radio buttons)
+  - Multiple choice (checkboxes)
+  - File upload (UI only)
+- Live preview pane showing form as candidates would see it
+- Validation rules (required fields, numeric ranges)
+- Persistent storage of assessments per job
 
-npm or yarn
+## 🛠 Tech Stack
 
-Install Dependencies
+- **Frontend**: React 19 with React Router DOM
+- **State Management**: Zustand for global state
+- **Styling**: Tailwind CSS 4.1 with custom CSS
+- **Database**: Dexie.js (IndexedDB wrapper) for local persistence
+- **API Simulation**: MirageJS with artificial latency and error simulation
+- **Build Tool**: Vite
+- **Data Generation**: Faker.js for seed data
+
+## 🚦 Quick Start
+
+### Prerequisites
+- Node.js v18+
+- npm or yarn
+
+### Installation
+
+```bash
+# Clone the repository
 git clone <repository-url>
 cd talentflow
+
+# Install dependencies
 npm install
 
-Run Application
-npm start
+# Start development server
+npm run dev
+```
 
+The application will be available at `http://localhost:5173`
 
-The app runs at http://localhost:3000.
+### Available Scripts
 
-Project Structure
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run preview  # Preview production build
+npm run lint     # Run ESLint
+```
+
+## 📁 Project Structure
+
+```
 talentflow/
-│── public/
-│── src/
+├── public/                 # Static assets
+├── src/
 │   ├── api/
-│   │   └── server.js            # MirageJS server simulating API endpoints
+│   │   └── server.js       # MirageJS server configuration
 │   ├── components/
-│   │   └── Navbar.jsx           # Navigation bar
-│   ├── db.js                    # Dexie.js database setup
-│   ├── utils/
-│   │   └── persist.js           # Helper functions for persistence
-│   ├── store/
-│   │   └── useStore.js          # Zustand store for global state
+│   │   ├── Navbar.jsx       # Navigation component
+│   │   └── Navbar.css       # Navigation styles
 │   ├── pages/
-│   │   ├── Jobs.jsx
-│   │   ├── Jobs.css
-│   │   ├── JobDetail.css
-│   │   ├── Candidates.jsx
-│   │   ├── Candidates.css
-│   │   ├── Assessments.jsx
-│   │   └── Assessments.css
-│   ├── App.jsx
-│   └── index.jsx
-│── package.json
+│   │   ├── Jobs.jsx         # Jobs listing and management
+│   │   ├── Jobs.css         # Jobs page styles
+│   │   ├── JobDetail.jsx    # Individual job details
+│   │   ├── JobDetail.css    # JobDetail page styles
+│   │   ├── Candidates.jsx   # Candidates dashboard
+│   │   ├── Candidates.css   # Candidates page styles
+│   │   ├── CandidateDetail.jsx # Individual candidate profile
+│   │   ├── CandidateDetail.css # CandidateDetail page styles
+│   │   ├── Assessments.jsx  # Assessment builder
+│   │   └── Assessments.css  # Assessments page styles
+│   ├── store/
+│   │   └── useStore.js      # Zustand global state
+│   ├── utils/
+│   │   └── persist.js       # IndexedDB persistence helpers
+│   ├── db.js                # Dexie database configuration
+│   ├── App.jsx              # Main app component
+│   └── index.jsx            # App entry point
+├── package.json
+└── README.md
 
-Architecture
-Core Stack
 
-React for UI
+```
 
-Zustand for state management
+## 🏗 Architecture
 
-Dexie.js for local IndexedDB persistence
+### Data Flow
+1. **UI Components** interact with Zustand store for state management
+2. **Store Functions** persist data via Dexie.js to IndexedDB
+3. **MirageJS** simulates REST API endpoints with realistic latency and errors
+4. **Persistence Layer** ensures data survives page refreshes
 
-MirageJS for API simulation with artificial latency & error handling
+### State Management Strategy
+- **Zustand** chosen over Redux for simplicity and minimal boilerplate
+- Centralized state for jobs, candidates, and assessments
+- Optimistic updates with rollback capabilities for failed operations
 
-Data Flow
+### Persistence Strategy
+- **Dexie.js** for local IndexedDB storage
+- Complete offline functionality
+- Data restoration on page refresh
+- Write-through caching pattern
 
-UI Components interact with Zustand store.
+## 🎯 Core Features
 
-Store functions persist data via Dexie.
+### Jobs Board
+- **Pagination**: Server-like pagination with configurable page sizes
+- **Filtering**: Search by title, filter by status (active/archived)
+- **CRUD Operations**: Full create, read, update, delete functionality
+- **Reordering**: Drag-and-drop with optimistic updates and error rollback
+- **Validation**: Title required, unique slug generation
 
-MirageJS simulates backend CRUD, allowing you to test latency, errors, and API logic.
+### Candidates Management
+- **Scalable List**: Handles 1000+ candidates efficiently
+- **Search & Filter**: Real-time search by name/email
+- **Stage Management**: Visual kanban-style stage transitions
+- **Profile Pages**: Individual candidate timelines and details
+- **Stage Transitions**: Applied → Screen → Tech → Offer → Hired/Rejected
 
-Pages & Features
-Jobs
+### Assessment System
+- **Builder Interface**: Intuitive question builder with live preview
+- **Question Types**: Text, textarea, number, radio, checkbox, file upload
+- **Validation Rules**: Required fields, numeric ranges, conditional logic
+- **Preview Mode**: Real-time form preview for testing
+- **Persistence**: Automatic saving of assessment configurations
 
-Create, archive/unarchive, and reorder jobs.
+## 🔌 API Endpoints
 
-Rollback on failure during reorder.
+### Jobs
+```
+GET    /api/jobs?search=&status=&page=&pageSize=
+POST   /api/jobs
+PATCH  /api/jobs/:id
+PATCH  /api/jobs/reorder
+```
 
-Persisted via Dexie.
+### Candidates
+```
+GET    /api/candidates
+POST   /api/candidates
+PATCH  /api/candidates/:id
+```
 
-Candidates
+### Assessments
+```
+GET    /api/assessments/:jobId
+PUT    /api/assessments/:jobId
+POST   /api/assessments/:jobId/submit
+```
 
-Stage transitions (dropdown)
+## 🧠 Design Decisions
 
-Persisted via Dexie
+### 1. State Management - Zustand
+**Why**: Simpler than Redux with less boilerplate while maintaining predictable state updates and good TypeScript support.
 
-Seeded with 1000 candidates
+### 2. Local Persistence - Dexie.js
+**Why**: IndexedDB provides robust client-side storage with better performance than localStorage for large datasets. Dexie.js offers a clean Promise-based API.
 
-Assessments
+### 3. API Simulation - MirageJS
+**Why**: Enables realistic backend simulation with latency, error handling, and data manipulation without requiring a real server.
 
-Builder + Preview per job
+### 4. Candidate Stage Management - Dropdown
+**Why**: Simplified implementation for MVP. Drag-and-drop kanban boards planned for future iterations.
 
-Save & persist per job
+### 5. Assessment Builder - Progressive Enhancement
+**Why**: Started with basic question types, designed for easy extension to support complex conditional logic and validation rules.
 
-Supports text/textarea/number inputs (other types pending)
+### 6. Component Architecture - Page/Component Split
+**Why**: Clear separation between page-level components (routing) and reusable UI components for maintainability.
 
-Decisions & Design Choices
-1. State Management
+## ⚠️ Known Limitations
 
-Chose Zustand over Redux for simplicity and minimal boilerplate.
+### Current Implementation Gaps
+- **Jobs**: Missing edit functionality, limited deep-linking
+- **Candidates**: No drag-and-drop kanban, limited search filters
+- **Assessments**: Limited question types, no conditional logic implementation
+- **General**: No real-time updates, no user authentication
 
-Store centralized data for jobs, candidates, and assessments.
+### Performance Considerations
+- Large candidate lists may need virtualization improvements
+- Assessment builder could benefit from debounced auto-save
+- Pagination could be optimized with better caching
 
-2. Persistence
+### UI/UX Areas for Improvement
+- Mobile responsiveness needs enhancement
+- Loading states could be more sophisticated
+- Error handling messages need improvement
+- Accessibility features need implementation
 
-Dexie.js chosen for local persistence; allows offline simulation and persistence across reloads.
+## 🛣 Future Roadmap
 
-3. Backend Simulation
+### Phase 1 - Core Improvements
+- [ ] Complete drag-and-drop kanban for candidates
+- [ ] Enhanced search and filtering across all modules
+- [ ] Mobile-responsive design improvements
+- [ ] Comprehensive error handling and user feedback
 
-MirageJS used to mock REST API endpoints for development/testing.
+### Phase 2 - Advanced Features
+- [ ] Real backend integration (Node.js + MongoDB)
+- [ ] User authentication and role-based access
+- [ ] Advanced assessment features (conditional logic, file uploads)
+- [ ] Email notifications and communication features
 
-Artificial latency and error simulation enable testing of rollback and loading states.
+### Phase 3 - Enterprise Features
+- [ ] Analytics dashboard with hiring metrics
+- [ ] Integration with external job boards
+- [ ] Advanced reporting and export capabilities
+- [ ] Multi-tenant architecture for different organizations
 
-4. Candidate Management
+### Technical Debt
+- [ ] Comprehensive test suite (unit, integration, e2e)
+- [ ] TypeScript migration for better type safety
+- [ ] Performance optimization and code splitting
+- [ ] Accessibility compliance (WCAG 2.1)
 
-Stage transitions implemented via dropdown for simplicity.
+## 🤝 Contributing
 
-Drag-and-drop and virtualized list left for future scalability improvements.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-5. Assessment Builder
 
-Sections, question types, conditional logic, and validations are planned.
+### Accessibility & Responsiveness
+- Fully responsive layouts for desktop and mobile devices
+- Dark mode toggle for better visual ergonomics
 
-Currently supports text-based questions and basic number input.
+### Development Guidelines
+- Follow existing code style and conventions
+- Add appropriate comments for complex logic
+- Update documentation for new features
+- Test functionality across different browsers
+- Ensure mobile compatibility
 
-Known Limitations / Roadmap
-Module	Pending Features
-Jobs	Pagination, filtering, edit job, deep-link /jobs/:jobId
-Candidates	Virtualized list, search/filter, profile route with timeline, kanban drag-and-drop, notes with mentions
-Assessments	Full question types (single/multi-choice, numeric range, file upload), sections, validation rules, conditional questions, candidate submission route
-Future Improvements
+## 📄 License
 
-Integrate real backend (Node.js/Express + MongoDB).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Add candidate profile pages with timeline and notes.
+## 🙏 Acknowledgments
 
-Enhance assessments with all required question types and submission endpoints.
-
-Optimize large candidate list rendering using virtualization.
-
-Quick Start Summary
-
-Clone repo → npm install
-
-Run → npm start
-
-Browse Jobs, Candidates, and Assessments
-
-Data persisted locally via IndexedDB
+- **React Team** for the robust frontend framework
+- **Zustand** for elegant state management
+- **Dexie.js** for powerful IndexedDB abstraction
+- **MirageJS** for excellent API mocking capabilities
+- **Faker.js** for generating realistic test data
