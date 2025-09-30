@@ -4,7 +4,7 @@ A full-featured recruitment management platform built with React, MirageJS, and 
 
 ## 🚀 Live Demo
 
-[Deployed App Link] - *(Add your deployment URL here)*
+Live link: https://talent-flow-three-pi.vercel.app/jobs
 
 ## 📋 Table of Contents
 
