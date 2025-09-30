@@ -214,9 +214,9 @@ POST   /api/assessments/:jobId/submit
 ## ⚠️ Known Limitations
 
 ### Current Implementation Gaps
-- **Jobs**: Missing edit functionality, limited deep-linking
-- **Candidates**: No drag-and-drop kanban, limited search filters
-- **Assessments**: Limited question types, no conditional logic implementation
+- **Jobs**:  limited deep-linking
+- **Candidates**: No drag-and-drop kanban
+- **Assessments**: Limited question types
 - **General**: No real-time updates, no user authentication
 
 ### Performance Considerations
